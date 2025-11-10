@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState } from "react";
 import "./FirstPage.css";
 import { FaStar, FaArrowLeft, FaArrowRight, FaThLarge } from "react-icons/fa";
 import LazyImage from "../../LazyImage/LazyImage";
