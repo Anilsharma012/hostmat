@@ -219,6 +219,7 @@ const MockTest = () => {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="strict-origin-when-cross-origin"
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
                 ></iframe>
               </div>
 
@@ -231,6 +232,7 @@ const MockTest = () => {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="strict-origin-when-cross-origin"
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
                 ></iframe>
               </div>
 
@@ -243,6 +245,7 @@ const MockTest = () => {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="strict-origin-when-cross-origin"
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
                 ></iframe>
               </div>
 
@@ -256,6 +259,7 @@ const MockTest = () => {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="strict-origin-when-cross-origin"
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
                 ></iframe>
               </div>
             </div>

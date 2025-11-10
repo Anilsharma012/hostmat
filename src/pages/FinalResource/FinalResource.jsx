@@ -405,8 +405,11 @@ const FinalResource = () => {
                       src={v.embedSrc}
                       title={v.title}
                       frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
+                      sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
                     ></iframe>
                     <div className="e-video-info">
                       <p className="e-tag">Watch Video</p>

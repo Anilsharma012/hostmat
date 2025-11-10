@@ -16,16 +16,20 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Initialize Razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET
-});
-
-console.log('💳 Razorpay Configuration:', {
-  keyId: process.env.RAZORPAY_KEY_ID ? '***' + process.env.RAZORPAY_KEY_ID.slice(-10) : 'NOT SET',
-  hasSecret: !!process.env.RAZORPAY_KEY_SECRET
-});
+// Initialize Razorpay (optional for development)
+let razorpay = null;
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+  });
+  console.log('💳 Razorpay Configuration:', {
+    keyId: '***' + process.env.RAZORPAY_KEY_ID.slice(-10),
+    hasSecret: true
+  });
+} else {
+  console.log('⚠️ Razorpay Configuration: NOT SET (payment features disabled)');
+}
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -820,6 +824,20 @@ app.post('/api/pay/create-order', userAuth, async (req, res) => {
 
     const amountInPaise = Math.round(Number(amount));
 
+    if (!razorpay) {
+      // Development mode without Razorpay - return a mock order
+      return res.json({
+        success: true,
+        order: {
+          id: `demo_order_${Date.now()}`,
+          amount: amountInPaise,
+          currency: 'INR',
+          receipt: `receipt_${req.user._id}_${courseId}_${Date.now()}`
+        },
+        keyId: 'demo_key_development'
+      });
+    }
+
     const options = {
       amount: amountInPaise,
       currency: 'INR',
@@ -850,20 +868,28 @@ app.post('/api/pay/verify', userAuth, async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, courseId } = req.body;
 
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    if (!razorpay_order_id || !razorpay_payment_id) {
       return res.status(400).json({ success: false, message: 'Missing payment details' });
     }
 
-    // Verify signature
-    const signatureBody = `${razorpay_order_id}|${razorpay_payment_id}`;
-    const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-      .update(signatureBody)
-      .digest('hex');
+    // Verify signature if Razorpay is configured
+    if (razorpay && process.env.RAZORPAY_KEY_SECRET) {
+      if (!razorpay_signature) {
+        return res.status(400).json({ success: false, message: 'Missing payment signature' });
+      }
 
-    if (expectedSignature !== razorpay_signature) {
-      console.error('❌ Signature mismatch:', { expected: expectedSignature, received: razorpay_signature });
-      return res.status(400).json({ success: false, message: 'Invalid payment signature' });
+      const signatureBody = `${razorpay_order_id}|${razorpay_payment_id}`;
+      const expectedSignature = crypto
+        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+        .update(signatureBody)
+        .digest('hex');
+
+      if (expectedSignature !== razorpay_signature) {
+        console.error('❌ Signature mismatch:', { expected: expectedSignature, received: razorpay_signature });
+        return res.status(400).json({ success: false, message: 'Invalid payment signature' });
+      }
+    } else {
+      console.log('⚠️ Development mode: Skipping Razorpay signature verification');
     }
 
     // Payment verified - create enrollment record
