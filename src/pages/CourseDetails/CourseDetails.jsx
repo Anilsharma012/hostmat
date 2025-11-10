@@ -188,6 +188,9 @@ const CourseDetails = () => {
       frameBorder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       allowFullScreen
+      sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+      loading="lazy"
+      referrerPolicy="no-referrer-when-downgrade"
       title="Hero Video"
     ></iframe>
   </div>
@@ -618,8 +621,11 @@ const CourseDetails = () => {
                   src="https://www.youtube.com/embed/EHBQ3AJ-uEo"
                   title="Video 1"
                   frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
               </div>
               <div className="tt-video-card">
@@ -629,8 +635,11 @@ const CourseDetails = () => {
                   src="https://www.youtube.com/embed/IVnBi5uPHW0"
                   title="Video 2"
                   frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
               </div>
             </div>
@@ -672,8 +681,11 @@ const CourseDetails = () => {
                   src={`https://www.youtube.com/embed/${id}`}
                   title={`Video ${index + 1}`}
                   frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
                 <div className="video-info">
                   <span className="video-label">Watch Video</span>
