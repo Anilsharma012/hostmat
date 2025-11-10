@@ -1675,7 +1675,7 @@ if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath));
 
   // Catch-all handler - serve index.html for all unmatched routes (SPA routing)
-  app.get('*', (req, res) => {
+  app.get('/*', (req, res) => {
     res.sendFile(path.join(buildPath, 'index.html'));
   });
 } else {
