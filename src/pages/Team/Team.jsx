@@ -274,8 +274,11 @@ const Team = () => {
                   src={`https://www.youtube.com/embed/${id}`}
                   title={meta?.title ? `${meta.title}` : `Video ${index + 1}`}
                   frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
 
                 <div className="video-info">
