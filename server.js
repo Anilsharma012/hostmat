@@ -288,6 +288,37 @@ app.get('/api/courses/student/published-courses', async (req, res) => {
   }
 });
 
+// Get course subjects
+app.get('/api/student/course/:courseId/subjects', async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    const course = await Course.findById(courseId)
+      .select('name description sections');
+
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Course not found' });
+    }
+
+    // Return course with sections/subjects
+    res.json({
+      success: true,
+      course: {
+        _id: course._id,
+        name: course.name,
+        description: course.description,
+        subjects: course.sections || [
+          { name: 'VARC', description: 'Verbal Ability & Reading Comprehension' },
+          { name: 'DILR', description: 'Data Interpretation & Logical Reasoning' },
+          { name: 'QA', description: 'Quantitative Ability' }
+        ]
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // Phone OTP endpoint
 app.post('/api/auth/phone/send-otp', async (req, res) => {
   try {
