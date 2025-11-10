@@ -824,6 +824,20 @@ app.post('/api/pay/create-order', userAuth, async (req, res) => {
 
     const amountInPaise = Math.round(Number(amount));
 
+    if (!razorpay) {
+      // Development mode without Razorpay - return a mock order
+      return res.json({
+        success: true,
+        order: {
+          id: `demo_order_${Date.now()}`,
+          amount: amountInPaise,
+          currency: 'INR',
+          receipt: `receipt_${req.user._id}_${courseId}_${Date.now()}`
+        },
+        keyId: 'demo_key_development'
+      });
+    }
+
     const options = {
       amount: amountInPaise,
       currency: 'INR',
