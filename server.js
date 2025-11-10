@@ -304,6 +304,8 @@ app.get('/api/student/course/:courseId/subjects', async (req, res) => {
       return res.status(404).json({ success: false, message: 'Course not found' });
     }
 
+    const subjects = await Subject.find({ courseId }).select('_id name description');
+
     // Return course with sections/subjects
     res.json({
       success: true,
@@ -311,13 +313,101 @@ app.get('/api/student/course/:courseId/subjects', async (req, res) => {
         _id: course._id,
         name: course.name,
         description: course.description,
-        subjects: course.sections || [
+        subjects: subjects.length > 0 ? subjects : [
           { name: 'VARC', description: 'Verbal Ability & Reading Comprehension' },
           { name: 'DILR', description: 'Data Interpretation & Logical Reasoning' },
           { name: 'QA', description: 'Quantitative Ability' }
         ]
       }
     });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Get chapters for a subject (for student view)
+app.get('/api/student/subject/:subjectId/chapters', async (req, res) => {
+  try {
+    const { subjectId } = req.params;
+    const chapters = await Chapter.find({ subjectId }).select('_id name description');
+    res.json({ success: true, chapters });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Get topics for a chapter (for student view)
+app.get('/api/student/chapter/:chapterId/topics', async (req, res) => {
+  try {
+    const { chapterId } = req.params;
+    const topics = await Topic.find({ chapterId }).select('_id name description isFullTestSection');
+    res.json({ success: true, topics });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Get tests for a topic (for student view)
+app.get('/api/student/topic/:topicId/tests', async (req, res) => {
+  try {
+    const { topicId } = req.params;
+    const tests = await Test.find({ topic: topicId }).select('_id title description duration totalMarks');
+    res.json({ success: true, tests });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Get complete course structure (all subjects, chapters, topics, tests)
+app.get('/api/student/course/:courseId/structure', async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      return res.status(401).json({ success: false, message: 'No token provided' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const course = await Course.findById(courseId).select('_id name description');
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Course not found' });
+    }
+
+    const subjects = await Subject.find({ courseId })
+      .select('_id name description')
+      .lean();
+
+    const subjectIds = subjects.map(s => s._id);
+    const chapters = await Chapter.find({ subjectId: { $in: subjectIds } })
+      .select('_id subjectId name description')
+      .lean();
+
+    const chapterIds = chapters.map(c => c._id);
+    const topics = await Topic.find({ chapterId: { $in: chapterIds } })
+      .select('_id chapterId subjectId name description isFullTestSection')
+      .lean();
+
+    const topicIds = topics.map(t => t._id);
+    const tests = await Test.find({ topic: { $in: topicIds } })
+      .select('_id topic title description duration totalMarks')
+      .lean();
+
+    const structure = {
+      course,
+      subjects,
+      chapters,
+      topics,
+      tests
+    };
+
+    res.json({ success: true, structure });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
