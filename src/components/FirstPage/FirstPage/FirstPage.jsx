@@ -53,7 +53,7 @@ const testimonials = [
 ];
 
 export default function FirstPage() {
-  const [current, setCurrent] = useState(0);
+  const [current] = useState(0);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
 
   const navigate = useNavigate();
