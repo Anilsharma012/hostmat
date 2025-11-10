@@ -1708,7 +1708,12 @@ app.get('/', (req, res) => {
     availableEndpoints: {
       auth: ['/api/auth/email/send-email', '/api/auth/email/verify', '/api/auth/phone/send-otp'],
       user: ['/api/user/verify-token', '/api/user/student/my-courses', '/api/user/update-details'],
-      courses: ['/api/courses/student/published-courses', '/api/courses', '/api/admin/courses'],
+      courses: [
+        '/api/courses/student/published-courses',
+        '/api/student/course/:courseId/subjects',
+        '/api/courses',
+        '/api/admin/courses'
+      ],
       health: ['/health', '/api/health']
     },
     note: 'Frontend running on port 3000. In production, build the React app and uncomment static serving below.'
