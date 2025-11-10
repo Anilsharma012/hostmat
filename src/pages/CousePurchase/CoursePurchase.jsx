@@ -303,11 +303,11 @@ const CoursePurchase = () => {
               src="https://www.youtube.com/embed/aDXkJwqAiP4?si=gtkt5zJpNyAy7LBS"
               title="Course Intro Video"
               frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
               sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
-              referrerPolicy="no-referrer-when-downgrade"
               loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
           </div>
 

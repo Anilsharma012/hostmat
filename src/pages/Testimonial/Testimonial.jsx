@@ -356,8 +356,11 @@ function Testimonial() {
                     src="https://www.youtube.com/embed/EHBQ3AJ-uEo"
                     title="YouTube video player"
                     frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
                   ></iframe>
                 </div>
               </div>
@@ -377,8 +380,11 @@ function Testimonial() {
                     src="https://www.youtube.com/embed/IVnBi5uPHW0"
                     title="YouTube video player"
                     frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
                   ></iframe>
                 </div>
               </div>
