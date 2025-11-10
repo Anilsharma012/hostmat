@@ -868,20 +868,28 @@ app.post('/api/pay/verify', userAuth, async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, courseId } = req.body;
 
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    if (!razorpay_order_id || !razorpay_payment_id) {
       return res.status(400).json({ success: false, message: 'Missing payment details' });
     }
 
-    // Verify signature
-    const signatureBody = `${razorpay_order_id}|${razorpay_payment_id}`;
-    const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-      .update(signatureBody)
-      .digest('hex');
+    // Verify signature if Razorpay is configured
+    if (razorpay && process.env.RAZORPAY_KEY_SECRET) {
+      if (!razorpay_signature) {
+        return res.status(400).json({ success: false, message: 'Missing payment signature' });
+      }
 
-    if (expectedSignature !== razorpay_signature) {
-      console.error('❌ Signature mismatch:', { expected: expectedSignature, received: razorpay_signature });
-      return res.status(400).json({ success: false, message: 'Invalid payment signature' });
+      const signatureBody = `${razorpay_order_id}|${razorpay_payment_id}`;
+      const expectedSignature = crypto
+        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+        .update(signatureBody)
+        .digest('hex');
+
+      if (expectedSignature !== razorpay_signature) {
+        console.error('❌ Signature mismatch:', { expected: expectedSignature, received: razorpay_signature });
+        return res.status(400).json({ success: false, message: 'Invalid payment signature' });
+      }
+    } else {
+      console.log('⚠️ Development mode: Skipping Razorpay signature verification');
     }
 
     // Payment verified - create enrollment record
