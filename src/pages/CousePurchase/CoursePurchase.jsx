@@ -350,7 +350,7 @@ const CoursePurchase = () => {
                 className={`tab-btn ${activeTab === "overview" ? "active" : ""}`}
                 onClick={() => handleTabClick("overview")}
               >
-                📘 Overview
+                ���� Overview
               </button>
               <button
                 className={`tab-btn ${activeTab === "curriculum" ? "active" : ""}`}
@@ -514,14 +514,9 @@ const CoursePurchase = () => {
     borderRadius: "8px",
     marginTop: "15px",
     transition: "0.3s",
+    cursor: "pointer",
   }}
-  onClick={() =>
-    window.open(
-      "https://pages.razorpay.com/pl_L4RlLDUmQHzJRO/view",
-      "_blank",
-      "noopener,noreferrer"
-    )
-  }
+  onClick={handlePayment}
 >
   Buy Now
 </button>
