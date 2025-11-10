@@ -1669,31 +1669,29 @@ app.get('/api/admin/payments', adminAuth, async (req, res) => {
 
 // ============ Static Files & Frontend Routing ============
 
-// Serve static files from React build
-const buildPath = path.join(__dirname, 'build');
-if (fs.existsSync(buildPath)) {
-  app.use(express.static(buildPath));
+// Development fallback - show API status at root
+app.get('/', (req, res) => {
+  res.json({
+    message: '🚀 Backend API Server Running',
+    version: '1.0.0',
+    availableEndpoints: {
+      auth: ['/api/auth/email/send-email', '/api/auth/email/verify', '/api/auth/phone/send-otp'],
+      user: ['/api/user/verify-token', '/api/user/student/my-courses', '/api/user/update-details'],
+      courses: ['/api/courses/student/published-courses', '/api/courses', '/api/admin/courses'],
+      health: ['/health', '/api/health']
+    },
+    note: 'Frontend running on port 3000. In production, build the React app and uncomment static serving below.'
+  });
+});
 
-  // Catch-all handler - serve index.html for all unmatched routes (SPA routing)
-  app.use((req, res) => {
-    res.sendFile(path.join(buildPath, 'index.html'));
-  });
-} else {
-  // Development fallback - if no build folder, show available API routes
-  app.get('/', (req, res) => {
-    res.json({
-      message: '🚀 Backend API Server Running',
-      version: '1.0.0',
-      availableEndpoints: {
-        auth: ['/api/auth/email/send-email', '/api/auth/email/verify', '/api/auth/phone/send-otp'],
-        user: ['/api/user/verify-token', '/api/user/student/my-courses', '/api/user/update-details'],
-        courses: ['/api/courses/student/published-courses', '/api/courses', '/api/admin/courses'],
-        health: ['/health', '/api/health']
-      },
-      note: 'Frontend build not found. In development, frontend runs on port 3003'
-    });
-  });
-}
+// Serve static files from React build (uncomment when deploying to production)
+// const buildPath = path.join(__dirname, 'build');
+// if (fs.existsSync(buildPath)) {
+//   app.use(express.static(buildPath));
+//   app.use((req, res) => {
+//     res.sendFile(path.join(buildPath, 'index.html'));
+//   });
+// }
 
 // ============ Start Server ============
 
