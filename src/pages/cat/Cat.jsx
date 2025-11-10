@@ -186,7 +186,7 @@ const Cat = () => {
         "GD-PI & WAT training for final B-school selection",
         "Flexible learning options – weekday & weekend batches available",
       ],
-      price: "₹30,000/-",
+      price: "���30,000/-",
       oldPrice: "₹1,20,000/-",
       buttonLabel: "Enroll Now",
       buttonLabel2: "Book Free Demo ",
@@ -447,8 +447,12 @@ const Cat = () => {
                     <iframe
                       src={v.url}
                       title={`Why CAT video ${i + 1}`}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
+                      sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
                     ></iframe>
                     <div className="tgw-video-meta">
                       <p>{v.name}</p>
@@ -494,8 +498,11 @@ const Cat = () => {
                       src={video.url}
                       title={video.title}
                       frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
+                      sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
                       className="tgr-yt-frame"
                     ></iframe>
                   </div>
