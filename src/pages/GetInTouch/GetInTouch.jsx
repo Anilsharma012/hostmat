@@ -244,6 +244,7 @@ const GetInTouch = () => {
           allowFullScreen=""
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
           title="TathaGat Location"
         ></iframe>
       </div>

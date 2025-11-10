@@ -11,6 +11,8 @@ const VideoModal = ({ videoId, onClose }) => {
           title="Topper Video"
           frameBorder="0"
           allowFullScreen
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+          referrerPolicy="no-referrer-when-downgrade"
         ></iframe>
       </div>
     </div>

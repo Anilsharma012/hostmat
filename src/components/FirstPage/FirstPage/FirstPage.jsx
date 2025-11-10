@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState } from "react";
 import "./FirstPage.css";
 import { FaStar, FaArrowLeft, FaArrowRight, FaThLarge } from "react-icons/fa";
 import LazyImage from "../../LazyImage/LazyImage";
@@ -53,7 +53,7 @@ const testimonials = [
 ];
 
 export default function FirstPage() {
-  const [current, setCurrent] = useState(0);
+  const [current] = useState(0);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
 
   const navigate = useNavigate();
@@ -64,6 +64,9 @@ export default function FirstPage() {
   const handleNext = () => {
     setTestimonialIndex((prev) => (prev + 1) % testimonials.length);
   };
+
+  const currentSlide = slides[current] || slides[0];
+  const currentTestimonial = testimonials[testimonialIndex] || testimonials[0];
 
   return (
     <section className="firstpage-hero-container">
@@ -82,8 +85,8 @@ export default function FirstPage() {
           {/* Carousel Card */}
           <div className="firstpage-hero-card">
             <span className="firstpage-badge">Since 2007</span>
-            <div className="firstpage-hero-icon">{slides[current].icon}</div>
-            <p className="firstpage-card-text">{slides[current].text}</p>
+            <div className="firstpage-hero-icon">{currentSlide.icon}</div>
+            <p className="firstpage-card-text">{currentSlide.text}</p>
             <div className="firstpage-dots">
               {slides.map((_, idx) => (
                 <span key={idx} className={idx === current ? "active" : ""}></span>
@@ -93,16 +96,16 @@ export default function FirstPage() {
 
           {/* Testimonial */}
           <div className="firstpage-testimonial-box">
-           
+
             <div className="firstpage-testimonial-header">
               <LazyImage
-                src={testimonials[testimonialIndex].image}
-                alt={testimonials[testimonialIndex].name}
+                src={currentTestimonial.image}
+                alt={currentTestimonial.name}
                 className="firstpage-avatar"
               />
               <div>
-                <strong style={{ color: "black" }}>{testimonials[testimonialIndex].name}</strong>
-                <p style={{ color: "black" }}>{testimonials[testimonialIndex].college}</p>
+                <strong style={{ color: "black" }}>{currentTestimonial.name}</strong>
+                <p style={{ color: "black" }}>{currentTestimonial.college}</p>
               </div>
               <div className="firstpage-rating">
                 {[...Array(5)].map((_, i) => (
@@ -111,10 +114,10 @@ export default function FirstPage() {
               </div>
             </div>
             <p className="firstpage-testimonial-text">
-              <strong>TathaGat</strong> {testimonials[testimonialIndex].text}
+              <strong>TathaGat</strong> {currentTestimonial.text}
             </p>
             <div className="firstpage-testimonial-footer">
-           
+
 <a
   href="/Testimonial"
   className="story-link"

@@ -69,6 +69,9 @@ const SecondPage = () => {
     setModalOpen(false);
   };
 
+  const currentBadge = badges[badgeIndex] || badges[0];
+  const currentExam = examsSet[examIndex] || examsSet[0];
+
   return (
     <section className="mentors-wrapper">
       <div className="mentors-section">
@@ -76,7 +79,7 @@ const SecondPage = () => {
 
         {/* Floating Badge */}
         <div className="mentors-fixed-badge">
-          <div className="mentors-badge-content">{badges[badgeIndex]}</div>
+          <div className="mentors-badge-content">{currentBadge}</div>
         </div>
 
         <div className="mentors-grid">
@@ -90,7 +93,7 @@ const SecondPage = () => {
             </div>
 
             <h2 className="mentors-heading">
-              Crack <span className="exam-text">{examsSet[examIndex]}</span>
+              Crack <span className="exam-text">{currentExam}</span>
               <br />
               with <span className="highlight">TathaGat</span>
             </h2>
@@ -225,6 +228,9 @@ const SecondPage = () => {
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  loading="lazy"
                 />
               </div>
             </div>

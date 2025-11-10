@@ -288,6 +288,37 @@ app.get('/api/courses/student/published-courses', async (req, res) => {
   }
 });
 
+// Get course subjects
+app.get('/api/student/course/:courseId/subjects', async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    const course = await Course.findById(courseId)
+      .select('name description sections');
+
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Course not found' });
+    }
+
+    // Return course with sections/subjects
+    res.json({
+      success: true,
+      course: {
+        _id: course._id,
+        name: course.name,
+        description: course.description,
+        subjects: course.sections || [
+          { name: 'VARC', description: 'Verbal Ability & Reading Comprehension' },
+          { name: 'DILR', description: 'Data Interpretation & Logical Reasoning' },
+          { name: 'QA', description: 'Quantitative Ability' }
+        ]
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // Phone OTP endpoint
 app.post('/api/auth/phone/send-otp', async (req, res) => {
   try {
@@ -1666,6 +1697,37 @@ app.get('/api/admin/payments', adminAuth, async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+// ============ Static Files & Frontend Routing ============
+
+// Development fallback - show API status at root
+app.get('/', (req, res) => {
+  res.json({
+    message: '🚀 Backend API Server Running',
+    version: '1.0.0',
+    availableEndpoints: {
+      auth: ['/api/auth/email/send-email', '/api/auth/email/verify', '/api/auth/phone/send-otp'],
+      user: ['/api/user/verify-token', '/api/user/student/my-courses', '/api/user/update-details'],
+      courses: [
+        '/api/courses/student/published-courses',
+        '/api/student/course/:courseId/subjects',
+        '/api/courses',
+        '/api/admin/courses'
+      ],
+      health: ['/health', '/api/health']
+    },
+    note: 'Frontend running on port 3000. In production, build the React app and uncomment static serving below.'
+  });
+});
+
+// Serve static files from React build (uncomment when deploying to production)
+// const buildPath = path.join(__dirname, 'build');
+// if (fs.existsSync(buildPath)) {
+//   app.use(express.static(buildPath));
+//   app.use((req, res) => {
+//     res.sendFile(path.join(buildPath, 'index.html'));
+//   });
+// }
 
 // ============ Start Server ============
 
