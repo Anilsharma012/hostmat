@@ -16,16 +16,20 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Initialize Razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET
-});
-
-console.log('💳 Razorpay Configuration:', {
-  keyId: process.env.RAZORPAY_KEY_ID ? '***' + process.env.RAZORPAY_KEY_ID.slice(-10) : 'NOT SET',
-  hasSecret: !!process.env.RAZORPAY_KEY_SECRET
-});
+// Initialize Razorpay (optional for development)
+let razorpay = null;
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+  });
+  console.log('💳 Razorpay Configuration:', {
+    keyId: '***' + process.env.RAZORPAY_KEY_ID.slice(-10),
+    hasSecret: true
+  });
+} else {
+  console.log('⚠️ Razorpay Configuration: NOT SET (payment features disabled)');
+}
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
