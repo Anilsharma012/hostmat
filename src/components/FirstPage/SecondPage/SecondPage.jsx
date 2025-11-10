@@ -228,6 +228,9 @@ const SecondPage = () => {
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  loading="lazy"
                 />
               </div>
             </div>
