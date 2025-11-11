@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ImageGallery.css";
+import VideoPreview from "../../components/VideoPreview/VideoPreview";
 
 import scorecardOne from "../../images/ScoreCardOne.png";
 import scorecardTwo from "../../images/ScoreCardTwo.png";
@@ -175,16 +176,10 @@ const ImageGallery = () => {
             <div className="tv-right">
               <div className="tv-video-card">
                 <div className="tv-video-label">Our Featured Videos</div>
-                <iframe
-                  className="tv-video-frame"
-                  src="https://www.youtube.com/embed/J_QoDDzzbyI"
+                <VideoPreview
+                  embedUrl="https://www.youtube.com/embed/J_QoDDzzbyI"
                   title="YouTube video player"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
+                  className="tv-video-frame vp-fill"
                 />
               </div>
             </div>

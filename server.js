@@ -274,6 +274,12 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'API server is running' });
 });
 
+// Simple test endpoint for sanity checks
+app.get('/api/test', (req, res) => {
+  res.json({ success: true, message: 'API test endpoint OK' });
+});
+
+
 // ============ Student/Public Routes ============
 
 // Get published courses for students
@@ -552,7 +558,7 @@ app.post('/api/auth/email/verify', async (req, res) => {
     }
 
     if (otpCode.length !== 6) {
-      console.log('❌ OTP code length is invalid:', otpCode.length);
+      console.log('��� OTP code length is invalid:', otpCode.length);
       return res.status(400).json({ success: false, message: 'OTP must be 6 digits' });
     }
 
@@ -692,6 +698,70 @@ app.get('/api/user/student/my-courses', userAuth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching my courses:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Return course progress and full structure for a student (used by frontend to render 'Continue Learning')
+app.get('/api/progress/course/:courseId', userAuth, async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    const course = await Course.findById(courseId).select('_id name description');
+    if (!course) return res.status(404).json({ success: false, message: 'Course not found' });
+
+    // Build structure like the /structure endpoint
+    const subjects = await Subject.find({ courseId }).select('_id name description').lean();
+    const subjectIds = subjects.map(s => s._id);
+    const chapters = await Chapter.find({ subjectId: { $in: subjectIds } }).select('_id subjectId name description').lean();
+    const chapterIds = chapters.map(c => c._id);
+    const topics = await Topic.find({ chapterId: { $in: chapterIds } }).select('_id chapterId subjectId name description isFullTestSection').lean();
+    const topicIds = topics.map(t => t._id);
+    const tests = await Test.find({ topic: { $in: topicIds } }).select('_id topic title description duration totalMarks').lean();
+
+    // Enrollment/progress info
+    const enrollment = await Enrollment.findOne({ studentId: req.user._id, courseId }).lean();
+    const progress = enrollment?.progress || 0;
+
+    res.json({
+      success: true,
+      progress,
+      enrollment: enrollment ? {
+        id: enrollment._id,
+        status: enrollment.status,
+        enrolledAt: enrollment.enrolledAt,
+        expiresAt: enrollment.expiresAt
+      } : null,
+      structure: { course, subjects, chapters, topics, tests }
+    });
+  } catch (error) {
+    console.error('Error fetching course progress:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Resume lesson endpoint: returns a lesson id/type to resume learning
+app.get('/api/progress/course/:courseId/resume', userAuth, async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    // Build structure same as progress endpoint
+    const subjects = await Subject.find({ courseId }).select('_id name').lean();
+    const subjectIds = subjects.map(s => s._id);
+    const chapters = await Chapter.find({ subjectId: { $in: subjectIds } }).select('_id subjectId name').lean();
+    const chapterIds = chapters.map(c => c._id);
+    const topics = await Topic.find({ chapterId: { $in: chapterIds } }).select('_id chapterId subjectId name isFullTestSection').lean();
+    const topicIds = topics.map(t => t._id);
+    const tests = await Test.find({ topic: { $in: topicIds } }).select('_id topic title').lean();
+
+    // prefer first test as resume lesson, otherwise null
+    if (tests && tests.length > 0) {
+      return res.json({ success: true, resumeLesson: { lessonId: tests[0]._id.toString(), lessonType: 'test' } });
+    }
+
+    // no tests found, return null
+    return res.json({ success: true, resumeLesson: null });
+  } catch (error) {
+    console.error('Error computing resume lesson:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 });
@@ -1015,6 +1085,56 @@ app.post('/api/pay/verify', userAuth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error verifying payment:', error.message);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Compatibility endpoint: frontend expects /api/user/payment/create-order — alias to /api/pay/create-order
+app.post('/api/user/payment/create-order', userAuth, async (req, res) => {
+  try {
+    const { courseId, amount, courseName } = req.body;
+
+    if (!courseId || !amount) {
+      return res.status(400).json({ success: false, message: 'CourseId and amount are required' });
+    }
+
+    const amountInPaise = Math.round(Number(amount));
+
+    if (!razorpay) {
+      // Development mode without Razorpay - return a mock order
+      return res.json({
+        success: true,
+        order: {
+          id: `demo_order_${Date.now()}`,
+          amount: amountInPaise,
+          currency: 'INR',
+          receipt: `receipt_${req.user._id}_${courseId}_${Date.now()}`
+        },
+        keyId: 'demo_key_development'
+      });
+    }
+
+    const options = {
+      amount: amountInPaise,
+      currency: 'INR',
+      receipt: `receipt_${req.user._id}_${courseId}_${Date.now()}`,
+      payment_capture: 1
+    };
+
+    const order = await razorpay.orders.create(options);
+
+    res.json({
+      success: true,
+      order: {
+        id: order.id,
+        amount: order.amount,
+        currency: order.currency,
+        receipt: order.receipt
+      },
+      keyId: process.env.RAZORPAY_KEY_ID
+    });
+  } catch (error) {
+    console.error('Error creating Razorpay order (alias):', error.message);
     res.status(500).json({ success: false, message: error.message });
   }
 });
@@ -1836,14 +1956,24 @@ app.get('/', (req, res) => {
   });
 });
 
-// Serve static files from React build (uncomment when deploying to production)
-// const buildPath = path.join(__dirname, 'build');
-// if (fs.existsSync(buildPath)) {
-//   app.use(express.static(buildPath));
-//   app.use((req, res) => {
-//     res.sendFile(path.join(buildPath, 'index.html'));
-//   });
-// }
+// Serve static files from the frontend public folder (SPA fallback for direct navigation)
+const buildPath = path.join(__dirname, 'public');
+if (fs.existsSync(buildPath)) {
+  app.use(express.static(buildPath));
+
+  // SPA fallback: send index.html for any non-API, non-static GET request so client-side routes work
+  app.use((req, res, next) => {
+    if (req.method !== 'GET') return next();
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
+
+    const indexFile = path.join(buildPath, 'index.html');
+    if (fs.existsSync(indexFile)) {
+      return res.sendFile(indexFile);
+    }
+
+    next();
+  });
+}
 
 // ============ Start Server ============
 

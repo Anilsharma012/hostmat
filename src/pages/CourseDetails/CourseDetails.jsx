@@ -40,6 +40,7 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 
 import ExploreBlog from "../../components/ExploreBlog/ExploreBlog";
 import Mycourse from "../../components/MyCourses/Mycourse";
+import VideoPreview from "../../components/VideoPreview/VideoPreview";
 import CourseComprasion from "../../components/CourseComprasion/CourseComprasion";
 import Chatbox from "../../components/Chat/Chatbox";
 
@@ -182,17 +183,11 @@ const CourseDetails = () => {
         {/* Right Section */}
     <div className="tgz-hero-right">
   <div className="tg-hero-video-wrapper">
-    <iframe
-      className="tg-hero-video"
-      src="https://www.youtube.com/embed/OcJId_ai8uY"
-      frameBorder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowFullScreen
-      sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
-      loading="lazy"
-      referrerPolicy="no-referrer-when-downgrade"
+    <VideoPreview
+      embedUrl="https://www.youtube.com/embed/OcJId_ai8uY"
       title="Hero Video"
-    ></iframe>
+      className="tg-hero-video vp-fill"
+    />
   </div>
 </div>
 
@@ -433,7 +428,7 @@ const CourseDetails = () => {
             <ul>
               <li>📌8–10 hrs sessions</li>
               <li>📌Peer to peer learning</li>
-              <li>📌Time bound high level question practice</li>
+              <li>��Time bound high level question practice</li>
               <li>📌Rigorous Practice</li>
             </ul>
           </div>
