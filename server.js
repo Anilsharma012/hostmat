@@ -1019,6 +1019,56 @@ app.post('/api/pay/verify', userAuth, async (req, res) => {
   }
 });
 
+// Compatibility endpoint: frontend expects /api/user/payment/create-order — alias to /api/pay/create-order
+app.post('/api/user/payment/create-order', userAuth, async (req, res) => {
+  try {
+    const { courseId, amount, courseName } = req.body;
+
+    if (!courseId || !amount) {
+      return res.status(400).json({ success: false, message: 'CourseId and amount are required' });
+    }
+
+    const amountInPaise = Math.round(Number(amount));
+
+    if (!razorpay) {
+      // Development mode without Razorpay - return a mock order
+      return res.json({
+        success: true,
+        order: {
+          id: `demo_order_${Date.now()}`,
+          amount: amountInPaise,
+          currency: 'INR',
+          receipt: `receipt_${req.user._id}_${courseId}_${Date.now()}`
+        },
+        keyId: 'demo_key_development'
+      });
+    }
+
+    const options = {
+      amount: amountInPaise,
+      currency: 'INR',
+      receipt: `receipt_${req.user._id}_${courseId}_${Date.now()}`,
+      payment_capture: 1
+    };
+
+    const order = await razorpay.orders.create(options);
+
+    res.json({
+      success: true,
+      order: {
+        id: order.id,
+        amount: order.amount,
+        currency: order.currency,
+        receipt: order.receipt
+      },
+      keyId: process.env.RAZORPAY_KEY_ID
+    });
+  } catch (error) {
+    console.error('Error creating Razorpay order (alias):', error.message);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // ============ Admin Routes ============
 
 // Admin Login
