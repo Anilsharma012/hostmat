@@ -40,6 +40,7 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 
 import ExploreBlog from "../../components/ExploreBlog/ExploreBlog";
 import Mycourse from "../../components/MyCourses/Mycourse";
+import VideoPreview from "../../components/VideoPreview/VideoPreview";
 import CourseComprasion from "../../components/CourseComprasion/CourseComprasion";
 import Chatbox from "../../components/Chat/Chatbox";
 
@@ -427,7 +428,7 @@ const CourseDetails = () => {
             <ul>
               <li>📌8–10 hrs sessions</li>
               <li>📌Peer to peer learning</li>
-              <li>📌Time bound high level question practice</li>
+              <li>��Time bound high level question practice</li>
               <li>📌Rigorous Practice</li>
             </ul>
           </div>
