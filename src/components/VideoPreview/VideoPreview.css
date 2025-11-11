@@ -1,0 +1,9 @@
+.vp-preview{position:relative;display:block;width:100%;height:100%;background:#000;cursor:pointer;overflow:hidden}
+.vp-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.vp-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(transparent,rgba(0,0,0,.35) 40%,rgba(0,0,0,.6));}
+.vp-play-icon{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.9);color:#000;font-size:22px;line-height:1;}
+
+/* Helpers to match existing shapes/heights where needed */
+.vp-embed-280{height:280px}
+.vp-rounded-top{border-radius:16px 16px 0 0}
+.vp-fill{width:100%;height:100%}
