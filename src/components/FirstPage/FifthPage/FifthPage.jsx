@@ -7,6 +7,7 @@ import learn4 from "../../../images/learningFour.png";
 import learn5 from "../../../images/learn5.jpeg";
 import learn6 from "../../../images/ourClass.jpg";
 import LazyImage from "../../LazyImage/LazyImage";
+import VideoPreview from "../../VideoPreview/VideoPreview";
 
 const stats = [
   { label: "Videos", target: 2000 },
