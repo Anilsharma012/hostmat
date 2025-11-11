@@ -558,7 +558,7 @@ app.post('/api/auth/email/verify', async (req, res) => {
     }
 
     if (otpCode.length !== 6) {
-      console.log('❌ OTP code length is invalid:', otpCode.length);
+      console.log('��� OTP code length is invalid:', otpCode.length);
       return res.status(400).json({ success: false, message: 'OTP must be 6 digits' });
     }
 
@@ -1962,7 +1962,7 @@ if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath));
 
   // SPA fallback: send index.html for any non-API, non-static request so client-side routes work
-  app.get('*', (req, res, next) => {
+  app.get('/*', (req, res, next) => {
     // let API and uploads requests pass through
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
 
