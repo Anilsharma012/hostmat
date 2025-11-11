@@ -179,13 +179,11 @@ const FifthPage = () => {
               }}
             >
               <div className="video-frame">
-                <iframe
-                  src={video.embed}
+                <VideoPreview
+                  embedUrl={video.embed}
                   title={video.title}
-                  frameBorder="0"
-                  allowFullScreen
-                  style={{ width: "100%", height: "280px", borderRadius: "16px 16px 0 0" }}
-                ></iframe>
+                  className="vp-embed-280 vp-rounded-top"
+                />
               </div>
               <div className="video-info">
                 <span className="watch-label">Watch Video</span>
