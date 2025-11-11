@@ -1961,12 +1961,17 @@ const buildPath = path.join(__dirname, 'public');
 if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath));
 
-  // SPA fallback: send index.html for any non-API, non-static request so client-side routes work
-  app.get('/*', (req, res, next) => {
-    // let API and uploads requests pass through
+  // SPA fallback: send index.html for any non-API, non-static GET request so client-side routes work
+  app.use((req, res, next) => {
+    if (req.method !== 'GET') return next();
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
 
-    res.sendFile(path.join(buildPath, 'index.html'));
+    const indexFile = path.join(buildPath, 'index.html');
+    if (fs.existsSync(indexFile)) {
+      return res.sendFile(indexFile);
+    }
+
+    next();
   });
 }
 
