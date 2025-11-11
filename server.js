@@ -740,6 +740,32 @@ app.get('/api/progress/course/:courseId', userAuth, async (req, res) => {
   }
 });
 
+// Resume lesson endpoint: returns a lesson id/type to resume learning
+app.get('/api/progress/course/:courseId/resume', userAuth, async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    // Build structure same as progress endpoint
+    const subjects = await Subject.find({ courseId }).select('_id name').lean();
+    const subjectIds = subjects.map(s => s._id);
+    const chapters = await Chapter.find({ subjectId: { $in: subjectIds } }).select('_id subjectId name').lean();
+    const chapterIds = chapters.map(c => c._id);
+    const topics = await Topic.find({ chapterId: { $in: chapterIds } }).select('_id chapterId subjectId name isFullTestSection').lean();
+    const topicIds = topics.map(t => t._id);
+    const tests = await Test.find({ topic: { $in: topicIds } }).select('_id topic title').lean();
+
+    // prefer first test as resume lesson, otherwise null
+    if (tests && tests.length > 0) {
+      return res.json({ success: true, resumeLesson: { lessonId: tests[0]._id.toString(), lessonType: 'test' } });
+    }
+
+    // no tests found, return null
+    return res.json({ success: true, resumeLesson: null });
+  } catch (error) {
+    console.error('Error computing resume lesson:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // Update user details
 app.post('/api/user/update-details', userAuth, async (req, res) => {
   try {
