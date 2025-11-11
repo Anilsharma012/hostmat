@@ -274,6 +274,49 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'API server is running' });
 });
 
+// Simple test endpoint for sanity checks
+app.get('/api/test', (req, res) => {
+  res.json({ success: true, message: 'API test endpoint OK' });
+});
+
+// Return course progress and full structure for a student (used by frontend to render 'Continue Learning')
+app.get('/api/progress/course/:courseId', userAuth, async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    const course = await Course.findById(courseId).select('_id name description');
+    if (!course) return res.status(404).json({ success: false, message: 'Course not found' });
+
+    // Build structure like the /structure endpoint
+    const subjects = await Subject.find({ courseId }).select('_id name description').lean();
+    const subjectIds = subjects.map(s => s._id);
+    const chapters = await Chapter.find({ subjectId: { $in: subjectIds } }).select('_id subjectId name description').lean();
+    const chapterIds = chapters.map(c => c._id);
+    const topics = await Topic.find({ chapterId: { $in: chapterIds } }).select('_id chapterId subjectId name description isFullTestSection').lean();
+    const topicIds = topics.map(t => t._id);
+    const tests = await Test.find({ topic: { $in: topicIds } }).select('_id topic title description duration totalMarks').lean();
+
+    // Enrollment/progress info
+    const enrollment = await Enrollment.findOne({ studentId: req.user._id, courseId }).lean();
+    const progress = enrollment?.progress || 0;
+
+    res.json({
+      success: true,
+      progress,
+      enrollment: enrollment ? {
+        id: enrollment._id,
+        status: enrollment.status,
+        enrolledAt: enrollment.enrolledAt,
+        expiresAt: enrollment.expiresAt
+      } : null,
+      structure: { course, subjects, chapters, topics, tests }
+    });
+  } catch (error) {
+    console.error('Error fetching course progress:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // ============ Student/Public Routes ============
 
 // Get published courses for students
