@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ImageGallery.css";
+import VideoPreview from "../../components/VideoPreview/VideoPreview";
 
 import scorecardOne from "../../images/ScoreCardOne.png";
 import scorecardTwo from "../../images/ScoreCardTwo.png";
