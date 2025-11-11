@@ -182,17 +182,11 @@ const CourseDetails = () => {
         {/* Right Section */}
     <div className="tgz-hero-right">
   <div className="tg-hero-video-wrapper">
-    <iframe
-      className="tg-hero-video"
-      src="https://www.youtube.com/embed/OcJId_ai8uY"
-      frameBorder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowFullScreen
-      sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
-      loading="lazy"
-      referrerPolicy="no-referrer-when-downgrade"
+    <VideoPreview
+      embedUrl="https://www.youtube.com/embed/OcJId_ai8uY"
       title="Hero Video"
-    ></iframe>
+      className="tg-hero-video vp-fill"
+    />
   </div>
 </div>
 
