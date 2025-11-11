@@ -1956,14 +1956,19 @@ app.get('/', (req, res) => {
   });
 });
 
-// Serve static files from React build (uncomment when deploying to production)
-// const buildPath = path.join(__dirname, 'build');
-// if (fs.existsSync(buildPath)) {
-//   app.use(express.static(buildPath));
-//   app.use((req, res) => {
-//     res.sendFile(path.join(buildPath, 'index.html'));
-//   });
-// }
+// Serve static files from the frontend public folder (SPA fallback for direct navigation)
+const buildPath = path.join(__dirname, 'public');
+if (fs.existsSync(buildPath)) {
+  app.use(express.static(buildPath));
+
+  // SPA fallback: send index.html for any non-API, non-static request so client-side routes work
+  app.get('*', (req, res, next) => {
+    // let API and uploads requests pass through
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
+
+    res.sendFile(path.join(buildPath, 'index.html'));
+  });
+}
 
 // ============ Start Server ============
 
